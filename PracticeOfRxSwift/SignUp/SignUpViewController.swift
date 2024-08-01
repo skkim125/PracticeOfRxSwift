@@ -21,8 +21,8 @@ final class SignUpViewController: UIViewController {
     
     // Property
     private var email = PublishSubject<String>()
-    private var emailValidText = BehaviorSubject(value: "알맞은 이메일 형식입니다")
-    private var nextButtonColor = BehaviorSubject(value: UIColor.systemGray)
+    private var emailValidText = BehaviorRelay(value: "알맞은 이메일 형식입니다")
+    private var nextButtonColor = BehaviorRelay(value: UIColor.systemGray)
     
     private let disposeBag = DisposeBag()
     
@@ -116,7 +116,7 @@ final class SignUpViewController: UIViewController {
                 owner.validationButton.setTitleColor(validationButtomcolor, for: .normal)
                 owner.validationLabel.isHidden = !isValid
                 
-                owner.nextButtonColor.onNext(isValid ? .systemGreen : .systemGray)
+                owner.nextButtonColor.accept(isValid ? .systemGreen : .systemGray)
             }
             .disposed(by: disposeBag)
         
