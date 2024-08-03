@@ -6,6 +6,8 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 import SnapKit
 
 final class BirthdayViewController: UIViewController {
@@ -36,8 +38,8 @@ final class BirthdayViewController: UIViewController {
     
     let yearLabel: UILabel = {
        let label = UILabel()
-        label.text = "2023년"
         label.textColor = Color.black
+        label.textAlignment = .center
         label.snp.makeConstraints {
             $0.width.equalTo(100)
         }
@@ -46,8 +48,8 @@ final class BirthdayViewController: UIViewController {
     
     let monthLabel: UILabel = {
        let label = UILabel()
-        label.text = "33월"
         label.textColor = Color.black
+        label.textAlignment = .center
         label.snp.makeConstraints {
             $0.width.equalTo(100)
         }
@@ -56,8 +58,8 @@ final class BirthdayViewController: UIViewController {
     
     let dayLabel: UILabel = {
        let label = UILabel()
-        label.text = "99일"
         label.textColor = Color.black
+        label.textAlignment = .center
         label.snp.makeConstraints {
             $0.width.equalTo(100)
         }
@@ -66,20 +68,20 @@ final class BirthdayViewController: UIViewController {
   
     let nextButton = PointButton(title: "가입하기")
     
+    let year = BehaviorRelay(value: 0)
+    let month = BehaviorRelay(value: 0)
+    let day = BehaviorRelay(value: 0)
+    
+    let disposeBag = DisposeBag()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
         view.backgroundColor = Color.white
         
         configureLayout()
-        
-        nextButton.addTarget(self, action: #selector(nextButtonClicked), for: .touchUpInside)
+        bind()
     }
-    
-    @objc func nextButtonClicked() {
-        navigationController?.pushViewController(SearchViewController(), animated: true)
-    }
-
     
     func configureLayout() {
         view.addSubview(infoLabel)
@@ -111,6 +113,39 @@ final class BirthdayViewController: UIViewController {
             make.top.equalTo(birthDayPicker.snp.bottom).offset(30)
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(20)
         }
+    }
+    
+    func bind() {
+        year
+            .map({ "\($0)년" })
+            .bind(to: yearLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        month
+            .map({ "\($0)월" })
+            .bind(to: monthLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        day
+            .map({ "\($0)일" })
+            .bind(to: dayLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        birthDayPicker.rx.date
+            .bind(with: self) { owner, date in
+                let component = Calendar.current.dateComponents([.year, .month, .day], from: date)
+                
+                owner.year.accept(component.year ?? -1)
+                owner.month.accept(component.month ?? -1)
+                owner.day.accept(component.day ?? -1)
+            }
+            .disposed(by: disposeBag)
+        
+        nextButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.navigationController?.pushViewController(SearchViewController(), animated: true)
+            }
+            .disposed(by: disposeBag)
     }
 
 }
