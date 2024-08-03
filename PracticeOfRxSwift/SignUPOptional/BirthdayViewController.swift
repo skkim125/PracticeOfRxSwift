@@ -24,7 +24,6 @@ final class BirthdayViewController: UIViewController {
     let infoLabel: UILabel = {
        let label = UILabel()
         label.textColor = Color.black
-        label.text = "만 17세 이상만 가입 가능합니다."
         return label
     }()
     
@@ -133,11 +132,10 @@ final class BirthdayViewController: UIViewController {
         
         birthDayPicker.rx.date
             .bind(with: self) { owner, date in
-                let component = Calendar.current.dateComponents([.year, .month, .day], from: date)
+                owner.bindPickerDateToLabel(date: date)
                 
-                owner.year.accept(component.year ?? -1)
-                owner.month.accept(component.month ?? -1)
-                owner.day.accept(component.day ?? -1)
+                let isUnder17 = owner.compareAge(date: date) < 17
+                owner.bindCompareAge(isUnder17: isUnder17)
             }
             .disposed(by: disposeBag)
         
@@ -147,5 +145,46 @@ final class BirthdayViewController: UIViewController {
             }
             .disposed(by: disposeBag)
     }
-
+    
+    private func bindPickerDateToLabel(date: Date) {
+        let component = Calendar.current.dateComponents([.year, .month, .day], from: date)
+        
+        guard let y = component.year, let m = component.month, let d = component.day else { return }
+        
+        year.accept(y)
+        month.accept(m)
+        day.accept(d)
+    }
+    
+    private func compareAge(date: Date) -> Int {
+        let component = Calendar.current.dateComponents([.year, .month, .day], from: date)
+        
+        guard let year = component.year, let month = component.month, let day = component.day else { return -1}
+        
+        let currentDate = Calendar.current.dateComponents([.year, .month, .day], from: Date())
+        
+        guard let currentYear = currentDate.year, let currentMonth = currentDate.month, let currentDay = currentDate.day else { return -1 }
+        
+        var age = currentYear - year //  < 17
+        let isCompareMonth = currentMonth < month
+        let isCompareDay = (currentMonth == month) && (currentDay < day)
+        
+        if isCompareMonth || isCompareDay {
+            return age - 1
+        }
+        
+        return age
+    }
+    
+    private func bindCompareAge(isUnder17: Bool) {
+        nextButton.rx.isEnabled.onNext(!isUnder17)
+        nextButton.rx.backgroundColor.onNext(isUnder17 ? .lightGray : .systemGreen)
+        infoLabel.rx.textColor.onNext(isUnder17 ? .systemRed : .systemGreen)
+        
+        if isUnder17 {
+            infoLabel.rx.text.onNext("만 17세 이상만 가입 가능합니다.")
+        } else {
+            infoLabel.rx.text.onNext("가입 가능한 나이입니다.")
+        }
+    }
 }
