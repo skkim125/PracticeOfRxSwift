@@ -27,6 +27,8 @@
 		047E13FB2C5BAB4A0016D02F /* RxCocoa in Frameworks */ = {isa = PBXBuildFile; productRef = 047E13FA2C5BAB4A0016D02F /* RxCocoa */; };
 		047E13FD2C5BAB4A0016D02F /* RxSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 047E13FC2C5BAB4A0016D02F /* RxSwift */; };
 		047E14052C5BAB5D0016D02F /* SnapKit in Frameworks */ = {isa = PBXBuildFile; productRef = 047E14042C5BAB5D0016D02F /* SnapKit */; };
+		047E140D2C5F3BD50016D02F /* ShoppingListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047E140C2C5F3BD50016D02F /* ShoppingListViewController.swift */; };
+		047E140F2C5F3FE80016D02F /* ShoppingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047E140E2C5F3FE80016D02F /* ShoppingTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -49,6 +51,8 @@
 		047E13F32C5BA9ED0016D02F /* SearchTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchTableViewCell.swift; sourceTree = "<group>"; };
 		047E13F52C5BA9F80016D02F /* DetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailViewController.swift; sourceTree = "<group>"; };
 		047E13F72C5BAA090016D02F /* Resource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Resource.swift; sourceTree = "<group>"; };
+		047E140C2C5F3BD50016D02F /* ShoppingListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListViewController.swift; sourceTree = "<group>"; };
+		047E140E2C5F3FE80016D02F /* ShoppingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +90,8 @@
 			children = (
 				047E13C62C5BA8890016D02F /* AppDelegate.swift */,
 				047E13C82C5BA8890016D02F /* SceneDelegate.swift */,
+				047E140C2C5F3BD50016D02F /* ShoppingListViewController.swift */,
+				047E140E2C5F3FE80016D02F /* ShoppingTableViewCell.swift */,
 				047E13DA2C5BA9020016D02F /* SignUp */,
 				047E13DF2C5BA9450016D02F /* SignIn */,
 				047E13E42C5BA9710016D02F /* SignUPOptional */,
@@ -234,9 +240,11 @@
 				047E13E12C5BA9550016D02F /* SignInViewController.swift in Sources */,
 				047E13C72C5BA8890016D02F /* AppDelegate.swift in Sources */,
 				047E13F22C5BA9E00016D02F /* SearchViewController.swift in Sources */,
+				047E140F2C5F3FE80016D02F /* ShoppingTableViewCell.swift in Sources */,
 				047E13EA2C5BA9AA0016D02F /* NicknameViewController.swift in Sources */,
 				047E13E62C5BA98D0016D02F /* BirthdayViewController.swift in Sources */,
 				047E13DC2C5BA9150016D02F /* SignUpViewController.swift in Sources */,
+				047E140D2C5F3BD50016D02F /* ShoppingListViewController.swift in Sources */,
 				047E13F62C5BA9F80016D02F /* DetailViewController.swift in Sources */,
 				047E13C92C5BA8890016D02F /* SceneDelegate.swift in Sources */,
 				047E13F42C5BA9ED0016D02F /* SearchTableViewCell.swift in Sources */,
