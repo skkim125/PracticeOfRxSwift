@@ -13,7 +13,7 @@ import SnapKit
 final class ShoppingTableViewCell: UITableViewCell {
     
     static let id = "ShoppingTableViewCell"
-    
+    private let bgView = UIView()
     let completeButton = UIButton()
     let shoppingTitleLabel = UILabel()
     let starButton = UIButton()
@@ -26,21 +26,24 @@ final class ShoppingTableViewCell: UITableViewCell {
         configureHierarchy()
         configureLayout()
         configureCell()
-        
-        contentView.layer.borderWidth = 1
-        contentView.layer.borderColor = UIColor.darkGray.cgColor
     }
     
     private func configureHierarchy() {
+        contentView.addSubview(bgView)
         contentView.addSubview(completeButton)
         contentView.addSubview(shoppingTitleLabel)
         contentView.addSubview(starButton)
     }
     
     private func configureLayout() {
+        bgView.snp.makeConstraints { make in
+            make.edges.equalTo(contentView).inset(2)
+        }
+        
         completeButton.snp.makeConstraints { make in
             make.size.equalTo(40)
-            make.verticalEdges.leading.equalTo(contentView.safeAreaLayoutGuide).inset(10)
+            make.centerY.equalTo(bgView.snp.centerY)
+            make.leading.equalTo(bgView.safeAreaLayoutGuide).inset(10)
         }
         
         shoppingTitleLabel.snp.makeConstraints { make in
@@ -52,11 +55,17 @@ final class ShoppingTableViewCell: UITableViewCell {
         starButton.snp.makeConstraints { make in
             make.size.equalTo(40)
             make.leading.equalTo(shoppingTitleLabel.snp.trailing).offset(10)
-            make.verticalEdges.trailing.equalTo(contentView.safeAreaLayoutGuide).inset(10)
+            make.centerY.equalTo(bgView.snp.centerY)
+            make.trailing.equalTo(bgView.safeAreaLayoutGuide).inset(10)
         }
     }
     
     func configureCell() {
+        bgView.layer.borderWidth = 1
+        bgView.layer.borderColor = UIColor.darkGray.cgColor
+        bgView.clipsToBounds = true
+        bgView.layer.cornerRadius = 4
+        
         completeButton.tintColor = .black
         starButton.tintColor = .black
     }

@@ -35,14 +35,16 @@ final class ShoppingListViewController: UIViewController {
         let tv = UITableView()
         tv.rowHeight = 60
         tv.separatorStyle = .none
-        tv.sectionFooterHeight = 5
         tv.register(ShoppingTableViewCell.self, forCellReuseIdentifier: ShoppingTableViewCell.id)
         
         return tv
     }()
+    private let emptyLabel = UILabel()
     
     private var shoppingList = ShoppingList.shared.shoppingList
     lazy var list = BehaviorSubject(value: shoppingList)
+    private var shoppingTitle = PublishRelay<String>()
+    
     private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
@@ -62,6 +64,7 @@ final class ShoppingListViewController: UIViewController {
     func configureHierarchy() {
         view.addSubview(shoppingTextField)
         view.addSubview(addButton)
+//        view.addSubview(emptyLabel)
         view.addSubview(tableView)
     }
     func configureLayout() {
@@ -76,6 +79,10 @@ final class ShoppingListViewController: UIViewController {
             make.trailing.equalTo(shoppingTextField.snp.trailing).inset(10)
             make.width.equalTo(50)
         }
+        
+//        emptyLabel.snp.makeConstraints { make in
+//            make.center.equalTo(view.safeAreaLayoutGuide)
+//        }
         
         tableView.snp.makeConstraints { make in
             make.top.equalTo(shoppingTextField.snp.bottom).offset(20)
@@ -93,15 +100,58 @@ final class ShoppingListViewController: UIViewController {
     func bind() {
         list
             .bind(to: tableView.rx.items(cellIdentifier: ShoppingTableViewCell.id, cellType: ShoppingTableViewCell.self)) { (row, element, cell) in
+                
                 let isCompletedImage = element.isCompleted ? "checkmark.square.fill" : "checkmark.square"
                 let isStaredImage = element.isStared ? "star.fill" : "star"
                 
                 cell.shoppingTitleLabel.text = element.title
                 cell.completeButton.setImage(UIImage(systemName: isCompletedImage), for: .normal)
                 cell.starButton.setImage(UIImage(systemName: isStaredImage), for: .normal)
+                
+                cell.completeButton.rx.tap
+                    .bind(with: self) { owner, _ in
+                        owner.shoppingList[row].isCompleted.toggle()
+                        owner.list.onNext(owner.shoppingList)
+                    }
+                    .disposed(by: cell.disposeBag)
+                
+                cell.starButton.rx.tap
+                    .bind(with: self) { owner, _ in
+                        owner.shoppingList[row].isStared.toggle()
+                        owner.list.onNext(owner.shoppingList)
+                    }
+                    .disposed(by: cell.disposeBag)
             }
             .disposed(by: disposeBag)
+        
+        shoppingTextField.rx.text.orEmpty
+            .bind(to: shoppingTitle)
+            .disposed(by: disposeBag)
 
+        addButton.rx.tap
+            .withLatestFrom(shoppingTitle) { _, title in
+                return title
+            }
+            .bind(with: self) { owner, title in
+                if !title.isEmpty {
+                    let newShopping = Shopping(title: title, isCompleted: false, isStared: false)
+                    
+                    owner.shoppingList.append(newShopping)
+                    owner.list.onNext(owner.shoppingList)
+                } else {
+                    owner.showAlert()
+                }
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    private func showAlert() {
+        let alert = UIAlertController(title: "한글자 이상 입력해주세요", message: nil, preferredStyle: .alert)
+        
+        let ok = UIAlertAction(title: "확인", style: .default)
+        alert.addAction(ok)
+        
+        present(alert, animated: true)
     }
 }
 
