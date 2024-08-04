@@ -94,7 +94,6 @@ final class SignUpViewController: UIViewController {
     }
     
     private func bind() {
-        
         emailValidText
             .bind(to: validationLabel.rx.text)
             .disposed(by: disposeBag)
@@ -115,8 +114,7 @@ final class SignUpViewController: UIViewController {
                 let validationButtomcolor: UIColor = isValid ? .black : .systemGray
                 owner.validationButton.setTitleColor(validationButtomcolor, for: .normal)
                 owner.validationLabel.isHidden = !isValid
-                
-                owner.nextButtonColor.accept(isValid ? .systemGreen : .systemGray)
+                owner.validationButton.rx.isEnabled.onNext(isValid)
             }
             .disposed(by: disposeBag)
         
@@ -124,11 +122,29 @@ final class SignUpViewController: UIViewController {
             .bind(to: nextButton.rx.isEnabled, validationButton.rx.isEnabled)
             .disposed(by: disposeBag)
         
+        emailTextField.rx.text.orEmpty
+            .bind(with: self) { owner, tfText in
+                guard let savedEmail = owner.emailLabel.text else { return }
+                if "\(tfText)" == savedEmail {
+                    owner.nextButton.rx.isEnabled.onNext(true)
+                    owner.nextButtonColor.accept(.systemGreen)
+                } else {
+                    owner.nextButton.rx.isEnabled.onNext(false)
+                    owner.nextButtonColor.accept(.systemGray)
+                }
+            }
+            .disposed(by: disposeBag)
+        
         validationButton.rx.tap
-            .bind(with: self) { owner, _ in
+            .withLatestFrom(emailTextField.rx.text.orEmpty) { _, email in
+                return email
+            }
+            .bind(with: self) { owner, email in
                 owner.showAlert()
-                owner.email.onNext(owner.emailTextField.text ?? "")
-                owner.emailLabel.isHidden = false
+                owner.email.onNext(email)
+                owner.emailLabel.rx.isHidden.onNext(false)
+                owner.nextButton.rx.isEnabled.onNext(true)
+                owner.nextButtonColor.accept(.systemGreen)
             }
             .disposed(by: disposeBag)
         
