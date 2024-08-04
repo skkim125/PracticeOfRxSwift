@@ -150,6 +150,12 @@ final class ShoppingListViewController: UIViewController {
                 
                 let vc = ShoppingDetailViewController()
                 vc.configureView(shopping: data)
+                vc.shopping = data
+                
+                vc.moveData = { editShopping in
+                    owner.shoppingList[indexPath.row] = editShopping
+                    owner.list.onNext(owner.shoppingList)
+                }
                 
                 owner.navigationController?.pushViewController(vc, animated: true)
                 owner.tableView.reloadRows(at: [indexPath], with: .automatic)

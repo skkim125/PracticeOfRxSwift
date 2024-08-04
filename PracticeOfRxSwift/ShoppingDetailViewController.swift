@@ -6,13 +6,14 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
 import SnapKit
 
 final class ShoppingDetailViewController: UIViewController {
     private let shoppingTitleLabel = UILabel()
     private let completeButton = {
         let button = UIButton()
-        button.setTitle("담기 완료", for: .normal)
         button.setImage(UIImage(systemName: "checkmark"), for: .normal)
         button.layer.cornerRadius = 4
         button.clipsToBounds = true
@@ -33,6 +34,10 @@ final class ShoppingDetailViewController: UIViewController {
         return button
     }()
     
+    private let disposeBag = DisposeBag()
+    var shopping: Shopping?
+    var moveData: ((Shopping) -> Void)?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -40,6 +45,8 @@ final class ShoppingDetailViewController: UIViewController {
         configureNavigationBar()
         configureHierarchy()
         configureLayout()
+        
+        bind()
     }
     
     private func configureNavigationBar() {
@@ -73,6 +80,7 @@ final class ShoppingDetailViewController: UIViewController {
     }
     
     func configureView(shopping: Shopping) {
+        let isCompletedButtonText = shopping.isCompleted ? "담기 완료" : "담기"
         let isCompletedButtonColor: UIColor = shopping.isCompleted ? .systemGreen : .white
         let isCompletedButtonTextColor: UIColor = shopping.isCompleted ? .white : .systemGreen
         let isStaredButtonColor: UIColor = shopping.isStared ? .systemYellow : .white
@@ -80,6 +88,7 @@ final class ShoppingDetailViewController: UIViewController {
         
         shoppingTitleLabel.text = shopping.title
         
+        completeButton.setTitle(isCompletedButtonText, for: .normal)
         completeButton.setTitleColor(isCompletedButtonTextColor, for: .normal)
         completeButton.imageView?.tintColor = isCompletedButtonTextColor
         completeButton.backgroundColor = isCompletedButtonColor
@@ -87,5 +96,29 @@ final class ShoppingDetailViewController: UIViewController {
         starButton.setTitleColor(isStaredButtonTextColor, for: .normal)
         starButton.imageView?.tintColor = isStaredButtonTextColor
         starButton.backgroundColor = isStaredButtonColor
+    }
+    
+    func bind() {
+        completeButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.shopping?.isCompleted.toggle()
+                guard let shopping = owner.shopping else { return }
+                owner.configureView(shopping: shopping)
+            }
+            .disposed(by: disposeBag)
+        
+        starButton.rx.tap
+            .bind(with: self) { owner, _ in
+                owner.shopping?.isStared.toggle()
+                guard let shopping = owner.shopping else { return }
+                owner.configureView(shopping: shopping)
+            }
+            .disposed(by: disposeBag)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        guard let shopping = shopping else { return }
+        moveData?(shopping)
     }
 }
