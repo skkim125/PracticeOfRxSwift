@@ -143,6 +143,18 @@ final class ShoppingListViewController: UIViewController {
                 }
             }
             .disposed(by: disposeBag)
+        
+        tableView.rx.itemSelected
+            .bind(with: self) { owner, indexPath in
+                let data = owner.shoppingList[indexPath.row]
+                
+                let vc = ShoppingDetailViewController()
+                vc.configureView(shopping: data)
+                
+                owner.navigationController?.pushViewController(vc, animated: true)
+                owner.tableView.reloadRows(at: [indexPath], with: .automatic)
+            }
+            .disposed(by: disposeBag)
     }
     
     private func showAlert() {

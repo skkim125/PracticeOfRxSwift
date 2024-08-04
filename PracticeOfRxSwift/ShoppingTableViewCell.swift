@@ -72,6 +72,7 @@ final class ShoppingTableViewCell: UITableViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        backgroundColor = .white
         
         disposeBag = DisposeBag()
     }
