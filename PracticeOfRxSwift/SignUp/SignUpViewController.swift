@@ -20,10 +20,7 @@ final class SignUpViewController: UIViewController {
     private let emailLabel = UILabel()
     
     // Property
-    private var email = PublishSubject<String>()
-    private var emailValidText = BehaviorRelay(value: "알맞은 이메일 형식입니다")
-    private var nextButtonColor = BehaviorRelay(value: UIColor.systemGray)
-    
+    private let viewModel = SignUpViewModel()
     private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
@@ -94,61 +91,55 @@ final class SignUpViewController: UIViewController {
     }
     
     private func bind() {
-        emailValidText
+        let input = SignUpViewModel.Input(emailText: emailTextField.rx.text.orEmpty, validationButtonTap: validationButton.rx.tap, nextButtonTap: nextButton.rx.tap)
+        let output = viewModel.transform(input: input)
+        
+        output.validationText
             .bind(to: validationLabel.rx.text)
             .disposed(by: disposeBag)
         
-        email
+        output.emailLabelText
             .bind(to: emailLabel.rx.text)
             .disposed(by: disposeBag)
         
-        nextButtonColor
-            .bind(to: nextButton.rx.backgroundColor)
-            .disposed(by: disposeBag)
-        
-        let emailValid = emailTextField.rx.text.orEmpty
-            .map({ $0.contains("@") && ( $0.contains(".com") || $0.contains(".net")) })
-        
-        emailValid
+        output.emailValid
             .bind(with: self) { owner, isValid in
                 let validationButtomcolor: UIColor = isValid ? .black : .systemGray
                 owner.validationButton.setTitleColor(validationButtomcolor, for: .normal)
                 owner.validationLabel.isHidden = !isValid
                 owner.validationButton.rx.isEnabled.onNext(isValid)
+                owner.nextButton.rx.backgroundColor.onNext(.systemGray)
             }
             .disposed(by: disposeBag)
         
-        emailValid
+        output.emailValid
             .bind(to: nextButton.rx.isEnabled, validationButton.rx.isEnabled)
             .disposed(by: disposeBag)
         
-        emailTextField.rx.text.orEmpty
+        output.emailText
             .bind(with: self) { owner, tfText in
                 guard let savedEmail = owner.emailLabel.text else { return }
-                if "\(tfText)" == savedEmail {
+                if !tfText.isEmpty && !savedEmail.isEmpty && "\(tfText)" == savedEmail {
                     owner.nextButton.rx.isEnabled.onNext(true)
-                    owner.nextButtonColor.accept(.systemGreen)
+                    owner.nextButton.rx.backgroundColor.onNext(.systemGreen)
                 } else {
                     owner.nextButton.rx.isEnabled.onNext(false)
-                    owner.nextButtonColor.accept(.systemGray)
+                    owner.nextButton.rx.backgroundColor.onNext(.systemGray)
                 }
             }
             .disposed(by: disposeBag)
         
-        validationButton.rx.tap
-            .withLatestFrom(emailTextField.rx.text.orEmpty) { _, email in
-                return email
-            }
+        output.validationResult
             .bind(with: self) { owner, email in
                 owner.showAlert()
-                owner.email.onNext(email)
+                output.emailLabelText.onNext(email)
                 owner.emailLabel.rx.isHidden.onNext(false)
                 owner.nextButton.rx.isEnabled.onNext(true)
-                owner.nextButtonColor.accept(.systemGreen)
+                owner.nextButton.rx.backgroundColor.onNext(.systemGreen)
             }
             .disposed(by: disposeBag)
         
-        nextButton.rx.tap
+        output.nextButtonTap
             .bind(with: self) { owner, _ in
                 owner.navigationController?.pushViewController(PasswordViewController(), animated: true)
             }

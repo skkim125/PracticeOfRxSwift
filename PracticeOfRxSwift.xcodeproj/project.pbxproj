@@ -30,6 +30,7 @@
 		047E140D2C5F3BD50016D02F /* ShoppingListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047E140C2C5F3BD50016D02F /* ShoppingListViewController.swift */; };
 		047E140F2C5F3FE80016D02F /* ShoppingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047E140E2C5F3FE80016D02F /* ShoppingTableViewCell.swift */; };
 		047E14172C5FB2170016D02F /* ShoppingDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047E14162C5FB2170016D02F /* ShoppingDetailViewController.swift */; };
+		047E141D2C60AE730016D02F /* SignUpViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047E141C2C60AE730016D02F /* SignUpViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,6 +56,7 @@
 		047E140C2C5F3BD50016D02F /* ShoppingListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingListViewController.swift; sourceTree = "<group>"; };
 		047E140E2C5F3FE80016D02F /* ShoppingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingTableViewCell.swift; sourceTree = "<group>"; };
 		047E14162C5FB2170016D02F /* ShoppingDetailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingDetailViewController.swift; sourceTree = "<group>"; };
+		047E141C2C60AE730016D02F /* SignUpViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -112,6 +114,7 @@
 			isa = PBXGroup;
 			children = (
 				047E13DB2C5BA9150016D02F /* SignUpViewController.swift */,
+				047E141C2C60AE730016D02F /* SignUpViewModel.swift */,
 				047E13DD2C5BA9250016D02F /* PasswordViewController.swift */,
 			);
 			path = SignUp;
@@ -239,6 +242,7 @@
 				047E13E32C5BA9660016D02F /* SignInViewModel.swift in Sources */,
 				047E13ED2C5BA9C10016D02F /* PointButton.swift in Sources */,
 				047E13EF2C5BA9CB0016D02F /* SignTextField.swift in Sources */,
+				047E141D2C60AE730016D02F /* SignUpViewModel.swift in Sources */,
 				047E13DE2C5BA9250016D02F /* PasswordViewController.swift in Sources */,
 				047E13E12C5BA9550016D02F /* SignInViewController.swift in Sources */,
 				047E14172C5FB2170016D02F /* ShoppingDetailViewController.swift in Sources */,
