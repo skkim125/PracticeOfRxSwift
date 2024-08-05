@@ -33,6 +33,7 @@
 		047E141D2C60AE730016D02F /* SignUpViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047E141C2C60AE730016D02F /* SignUpViewModel.swift */; };
 		047E141F2C60C0690016D02F /* PasswordViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047E141E2C60C0690016D02F /* PasswordViewModel.swift */; };
 		047E14212C60CAC30016D02F /* PhoneViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047E14202C60CAC30016D02F /* PhoneViewModel.swift */; };
+		047E14232C60F7F60016D02F /* BirthdayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047E14222C60F7F60016D02F /* BirthdayViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -61,6 +62,7 @@
 		047E141C2C60AE730016D02F /* SignUpViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpViewModel.swift; sourceTree = "<group>"; };
 		047E141E2C60C0690016D02F /* PasswordViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordViewModel.swift; sourceTree = "<group>"; };
 		047E14202C60CAC30016D02F /* PhoneViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneViewModel.swift; sourceTree = "<group>"; };
+		047E14222C60F7F60016D02F /* BirthdayViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirthdayViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -138,6 +140,7 @@
 			isa = PBXGroup;
 			children = (
 				047E13E52C5BA98D0016D02F /* BirthdayViewController.swift */,
+				047E14222C60F7F60016D02F /* BirthdayViewModel.swift */,
 				047E13E72C5BA9A10016D02F /* PhoneViewController.swift */,
 				047E14202C60CAC30016D02F /* PhoneViewModel.swift */,
 				047E13E92C5BA9AA0016D02F /* NicknameViewController.swift */,
@@ -264,6 +267,7 @@
 				047E13F62C5BA9F80016D02F /* DetailViewController.swift in Sources */,
 				047E13C92C5BA8890016D02F /* SceneDelegate.swift in Sources */,
 				047E13F42C5BA9ED0016D02F /* SearchTableViewCell.swift in Sources */,
+				047E14232C60F7F60016D02F /* BirthdayViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

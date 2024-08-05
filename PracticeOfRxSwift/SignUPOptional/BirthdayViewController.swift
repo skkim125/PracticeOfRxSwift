@@ -20,13 +20,11 @@ final class BirthdayViewController: UIViewController {
         picker.maximumDate = Date()
         return picker
     }()
-    
     let infoLabel: UILabel = {
        let label = UILabel()
         label.textColor = Color.black
         return label
     }()
-    
     let containerStackView: UIStackView = {
         let stack = UIStackView()
         stack.axis = .horizontal
@@ -34,7 +32,6 @@ final class BirthdayViewController: UIViewController {
         stack.spacing = 10
         return stack
     }()
-    
     let yearLabel: UILabel = {
        let label = UILabel()
         label.textColor = Color.black
@@ -44,7 +41,6 @@ final class BirthdayViewController: UIViewController {
         }
         return label
     }()
-    
     let monthLabel: UILabel = {
        let label = UILabel()
         label.textColor = Color.black
@@ -54,7 +50,6 @@ final class BirthdayViewController: UIViewController {
         }
         return label
     }()
-    
     let dayLabel: UILabel = {
        let label = UILabel()
         label.textColor = Color.black
@@ -64,13 +59,10 @@ final class BirthdayViewController: UIViewController {
         }
         return label
     }()
-  
     let nextButton = PointButton(title: "가입하기")
     
-    let year = BehaviorRelay(value: 0)
-    let month = BehaviorRelay(value: 0)
-    let day = BehaviorRelay(value: 0)
     
+    private let viewModel = BirthdayViewModel()
     let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
@@ -115,45 +107,40 @@ final class BirthdayViewController: UIViewController {
     }
     
     func bind() {
-        year
+        let input = BirthdayViewModel.Input(birth: birthDayPicker.rx.date, nextButtonTap: nextButton.rx.tap)
+        let output = viewModel.transform(input: input)
+        
+        output.year
             .map({ "\($0)년" })
             .bind(to: yearLabel.rx.text)
             .disposed(by: disposeBag)
         
-        month
+        output.month
             .map({ "\($0)월" })
             .bind(to: monthLabel.rx.text)
             .disposed(by: disposeBag)
         
-        day
+        output.day
             .map({ "\($0)일" })
             .bind(to: dayLabel.rx.text)
             .disposed(by: disposeBag)
         
-        birthDayPicker.rx.date
-            .bind(with: self) { owner, date in
-                owner.bindPickerDateToLabel(date: date)
-                
-                let isUnder17 = owner.compareAge(date: date) < 17
+        output.infoLabelText
+            .bind(to: infoLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        output.validAge
+            .bind(with: self) { owner, isUnder17 in
                 owner.bindCompareAge(isUnder17: isUnder17)
             }
             .disposed(by: disposeBag)
         
-        nextButton.rx.tap
+        output.nextButtonTap
             .bind(with: self) { owner, _ in
                 owner.navigationController?.pushViewController(SearchViewController(), animated: true)
             }
             .disposed(by: disposeBag)
-    }
-    
-    private func bindPickerDateToLabel(date: Date) {
-        let component = Calendar.current.dateComponents([.year, .month, .day], from: date)
         
-        guard let y = component.year, let m = component.month, let d = component.day else { return }
-        
-        year.accept(y)
-        month.accept(m)
-        day.accept(d)
     }
     
     private func compareAge(date: Date) -> Int {
@@ -177,14 +164,8 @@ final class BirthdayViewController: UIViewController {
     }
     
     private func bindCompareAge(isUnder17: Bool) {
-        nextButton.rx.isEnabled.onNext(!isUnder17)
-        nextButton.rx.backgroundColor.onNext(isUnder17 ? .lightGray : .systemGreen)
-        infoLabel.rx.textColor.onNext(isUnder17 ? .systemRed : .systemGreen)
-        
-        if isUnder17 {
-            infoLabel.rx.text.onNext("만 17세 이상만 가입 가능합니다.")
-        } else {
-            infoLabel.rx.text.onNext("가입 가능한 나이입니다.")
-        }
+        nextButton.rx.isEnabled.onNext(isUnder17)
+        nextButton.rx.backgroundColor.onNext(isUnder17 ? .systemGreen : .lightGray)
+        infoLabel.rx.textColor.onNext(isUnder17 ? .systemGreen : .systemRed)
     }
 }
