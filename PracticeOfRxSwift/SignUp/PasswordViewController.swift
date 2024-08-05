@@ -16,6 +16,7 @@ final class PasswordViewController: UIViewController {
     private let passwordValidLabel = UILabel()
     private let nextButton = PointButton(title: "다음")
     
+    private let viewModel = PasswordViewModel()
     private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
@@ -54,23 +55,26 @@ final class PasswordViewController: UIViewController {
     }
     
     func bind() {
-        let passwordValid = passwordTextField.rx.text.orEmpty
-            .map({ $0.count >= 8 })
+        let input = PasswordViewModel.Input(passwordText: passwordTextField.rx.text.orEmpty, nextButtonTap: nextButton.rx.tap)
+        let output = viewModel.transform(input: input)
         
-        passwordValid
+        output.passwordValid
             .bind(with: self) { owner, isValid in
                 let labelColor: UIColor = isValid ? .black : .systemRed
                 let buttonColor: UIColor = isValid ? .systemGreen : .systemGray
-                let labelText = isValid ? "알맞은 형식입니다" : "8자 이상 입력해주세요"
-                owner.passwordValidLabel.rx.text.onNext(labelText)
-                owner.passwordValidLabel.rx.textColor.onNext(labelColor)
                 
+                owner.passwordValidLabel.rx.textColor.onNext(labelColor)
                 owner.nextButton.rx.backgroundColor.onNext(buttonColor)
                 owner.nextButton.rx.isEnabled.onNext(isValid)
             }
             .disposed(by: disposeBag)
         
-        nextButton.rx.tap
+        output.validText
+            .map({ "\($0)" })
+            .bind(to: passwordValidLabel.rx.text)
+            .disposed(by: disposeBag)
+        
+        output.nextButtonTap
             .bind(with: self) { owner, _ in
                 owner.navigationController?.pushViewController(PhoneViewController(), animated: true)
             }
