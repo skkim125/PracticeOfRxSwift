@@ -18,6 +18,10 @@ final class ShoppingTableViewCell: UITableViewCell {
     let shoppingTitleLabel = UILabel()
     let starButton = UIButton()
     
+    let viewModel = ShoppingTableViewCellViewModel()
+    lazy var input = ShoppingTableViewCellViewModel.Input(shopping: BehaviorRelay(value: Shopping(title: "", isCompleted: false, isStared: false)), completeButtonTap: completeButton.rx.tap, starButtonTap: starButton.rx.tap)
+    lazy var output = viewModel.transform(input: input)
+    
     var disposeBag = DisposeBag()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -25,7 +29,6 @@ final class ShoppingTableViewCell: UITableViewCell {
         
         configureHierarchy()
         configureLayout()
-        configureCell()
     }
     
     private func configureHierarchy() {
@@ -60,7 +63,7 @@ final class ShoppingTableViewCell: UITableViewCell {
         }
     }
     
-    func configureCell() {
+    func configureCell(shopping: Shopping) {
         bgView.layer.borderWidth = 1
         bgView.layer.borderColor = UIColor.darkGray.cgColor
         bgView.clipsToBounds = true
@@ -68,6 +71,13 @@ final class ShoppingTableViewCell: UITableViewCell {
         
         completeButton.tintColor = .black
         starButton.tintColor = .black
+        
+        let isCompletedImage = shopping.isCompleted ? "checkmark.square.fill" : "checkmark.square"
+        let isStaredImage = shopping.isStared ? "star.fill" : "star"
+        
+        shoppingTitleLabel.text = shopping.title
+        completeButton.setImage(UIImage(systemName: isCompletedImage), for: .normal)
+        starButton.setImage(UIImage(systemName: isStaredImage), for: .normal)
     }
     
     override func prepareForReuse() {

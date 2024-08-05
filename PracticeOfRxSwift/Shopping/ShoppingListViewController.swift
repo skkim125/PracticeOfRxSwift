@@ -41,10 +41,7 @@ final class ShoppingListViewController: UIViewController {
     }()
     private let emptyLabel = UILabel()
     
-    private var shoppingList = ShoppingList.shared.shoppingList
-    lazy var list = BehaviorSubject(value: shoppingList)
-    private var shoppingTitle = PublishRelay<String>()
-    
+    private let viewModel = ShoppingViewModel()
     private let disposeBag = DisposeBag()
     
     override func viewDidLoad() {
@@ -64,7 +61,6 @@ final class ShoppingListViewController: UIViewController {
     func configureHierarchy() {
         view.addSubview(shoppingTextField)
         view.addSubview(addButton)
-//        view.addSubview(emptyLabel)
         view.addSubview(tableView)
     }
     func configureLayout() {
@@ -80,10 +76,6 @@ final class ShoppingListViewController: UIViewController {
             make.width.equalTo(50)
         }
         
-//        emptyLabel.snp.makeConstraints { make in
-//            make.center.equalTo(view.safeAreaLayoutGuide)
-//        }
-        
         tableView.snp.makeConstraints { make in
             make.top.equalTo(shoppingTextField.snp.bottom).offset(20)
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(20)
@@ -98,46 +90,35 @@ final class ShoppingListViewController: UIViewController {
     }
     
     func bind() {
-        list
+        let input = ShoppingViewModel.Input(shoppingTitle: shoppingTextField.rx.text.orEmpty, addButtonTap: addButton.rx.tap)
+        var output = viewModel.transform(input: input)
+        
+        output.list
             .bind(to: tableView.rx.items(cellIdentifier: ShoppingTableViewCell.id, cellType: ShoppingTableViewCell.self)) { (row, element, cell) in
                 
-                let isCompletedImage = element.isCompleted ? "checkmark.square.fill" : "checkmark.square"
-                let isStaredImage = element.isStared ? "star.fill" : "star"
+                cell.configureCell(shopping: element)
                 
-                cell.shoppingTitleLabel.text = element.title
-                cell.completeButton.setImage(UIImage(systemName: isCompletedImage), for: .normal)
-                cell.starButton.setImage(UIImage(systemName: isStaredImage), for: .normal)
-                
-                cell.completeButton.rx.tap
-                    .bind(with: self) { owner, _ in
-                        owner.shoppingList[row].isCompleted.toggle()
-                        owner.list.onNext(owner.shoppingList)
+                cell.output.completeButtonTap
+                    .bind(with: self) { _, _ in
+                        output.shoppingisCompletedChange(row)
                     }
                     .disposed(by: cell.disposeBag)
                 
-                cell.starButton.rx.tap
-                    .bind(with: self) { owner, _ in
-                        owner.shoppingList[row].isStared.toggle()
-                        owner.list.onNext(owner.shoppingList)
+                cell.output.starButtonTap
+                    .bind(with: self) { _, _ in
+                        output.shoppingisStaredChange(row)
                     }
                     .disposed(by: cell.disposeBag)
             }
             .disposed(by: disposeBag)
         
-        shoppingTextField.rx.text.orEmpty
-            .bind(to: shoppingTitle)
-            .disposed(by: disposeBag)
-
-        addButton.rx.tap
-            .withLatestFrom(shoppingTitle) { _, title in
+        output.addButtonTap
+            .withLatestFrom(output.shoppingTitle) { _, title in
                 return title
             }
             .bind(with: self) { owner, title in
                 if !title.isEmpty {
-                    let newShopping = Shopping(title: title, isCompleted: false, isStared: false)
-                    
-                    owner.shoppingList.append(newShopping)
-                    owner.list.onNext(owner.shoppingList)
+                    output.addNewShopping(title: title)
                 } else {
                     owner.showAlert()
                 }
@@ -146,15 +127,14 @@ final class ShoppingListViewController: UIViewController {
         
         tableView.rx.itemSelected
             .bind(with: self) { owner, indexPath in
-                let data = owner.shoppingList[indexPath.row]
+                let data = output.shoppingList[indexPath.row]
                 
                 let vc = ShoppingDetailViewController()
                 vc.configureView(shopping: data)
                 vc.shopping = data
                 
                 vc.moveData = { editShopping in
-                    owner.shoppingList[indexPath.row] = editShopping
-                    owner.list.onNext(owner.shoppingList)
+                    output.editShopping(indexPath.row, editShopping: editShopping)
                 }
                 
                 owner.navigationController?.pushViewController(vc, animated: true)
@@ -171,22 +151,9 @@ final class ShoppingListViewController: UIViewController {
         
         present(alert, animated: true)
     }
-}
-
-struct Shopping {
-    let title: String
-    var isCompleted: Bool
-    var isStared: Bool
-}
-
-final class ShoppingList {
-    static let shared = ShoppingList()
-    private init() { }
     
-    let shoppingList: [Shopping] = [
-        Shopping(title: "한우 투쁠", isCompleted: false, isStared: true),
-        Shopping(title: "상추", isCompleted: false, isStared: false),
-        Shopping(title: "사이다", isCompleted: true, isStared: false),
-        Shopping(title: "돗자리", isCompleted: true, isStared: true),
-    ]
+    private func shoppingStatusChange(output: inout ShoppingViewModel.Output, _ index: Int) {
+        output.shoppingList[index].isCompleted.toggle()
+        output.list.accept(output.shoppingList)
+    }
 }
