@@ -15,6 +15,7 @@ final class PhoneViewController: UIViewController {
     private let phoneValidLabel = UILabel()
     private let nextButton = PointButton(title: "다음")
     
+    private let viewModel = PhoneViewModel()
     private var phoneValidText = PublishRelay<String>()
     private var phoneText = BehaviorRelay(value: "010")
     private let disposeBag = DisposeBag()
@@ -58,11 +59,10 @@ final class PhoneViewController: UIViewController {
     }
     
     func bind() {
-        phoneText
-            .bind(to: phoneTextField.rx.text)
-            .disposed(by: disposeBag)
+        let input = PhoneViewModel.Input(phoneText: phoneTextField.rx.text, nextButtonTap: nextButton.rx.tap)
+        let output = viewModel.transform(input: input)
         
-        phoneTextField.rx.text.orEmpty
+        output.phoneText.orEmpty
             .bind(to: phoneValidText)
             .disposed(by: disposeBag)
         
@@ -70,13 +70,13 @@ final class PhoneViewController: UIViewController {
             .bind(to: phoneValidLabel.rx.text)
             .disposed(by: disposeBag)
         
-        let phoneValidOfIsEmpty = phoneTextField.rx.text.orEmpty
+        let phoneValidOfIsEmpty = output.phoneText.orEmpty
             .map({ !$0.trimmingCharacters(in: .whitespaces).isEmpty })
         
-        let phoneValidOfNum = phoneTextField.rx.text.orEmpty
+        let phoneValidOfNum = output.phoneText.orEmpty
             .map({ Int($0) != nil })
         
-        let phoneValidOfCount = phoneTextField.rx.text.orEmpty
+        let phoneValidOfCount = output.phoneText.orEmpty
             .map({ $0.trimmingCharacters(in: .whitespaces).count >= 10 })
         
         Observable.combineLatest(phoneValidOfIsEmpty, phoneValidOfNum, phoneValidOfCount)
@@ -102,7 +102,7 @@ final class PhoneViewController: UIViewController {
             }
             .disposed(by: disposeBag)
         
-        nextButton.rx.tap
+        output.nextButtonTap
             .bind(with: self) { owner, _ in
                 owner.navigationController?.pushViewController(NicknameViewController(), animated: true)
             }
