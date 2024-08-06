@@ -90,7 +90,7 @@ final class ShoppingListViewController: UIViewController {
     }
     
     func bind() {
-        let input = ShoppingViewModel.Input(shoppingTitle: shoppingTextField.rx.text.orEmpty, addButtonTap: addButton.rx.tap)
+        let input = ShoppingViewModel.Input(shoppingTitle: shoppingTextField.rx.text.orEmpty, addButtonTap: addButton.rx.tap, cellTap: tableView.rx.itemSelected)
         var output = viewModel.transform(input: input)
         
         output.list
@@ -98,14 +98,14 @@ final class ShoppingListViewController: UIViewController {
                 
                 cell.configureCell(shopping: element)
                 
-                cell.output.completeButtonTap
+                cell.completeButton.rx.tap
                     .bind(with: self) { _, _ in
                         output.shoppingisCompletedChange(row)
                     }
                     .disposed(by: cell.disposeBag)
                 
-                cell.output.starButtonTap
-                    .bind(with: self) { _, _ in
+                cell.starButton.rx.tap
+                    .bind(with: self) { _, _ in 
                         output.shoppingisStaredChange(row)
                     }
                     .disposed(by: cell.disposeBag)
@@ -125,7 +125,7 @@ final class ShoppingListViewController: UIViewController {
             }
             .disposed(by: disposeBag)
         
-        tableView.rx.itemSelected
+        output.cellTap
             .bind(with: self) { owner, indexPath in
                 let data = output.shoppingList[indexPath.row]
                 

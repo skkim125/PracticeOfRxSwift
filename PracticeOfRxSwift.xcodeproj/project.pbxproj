@@ -36,7 +36,6 @@
 		047E14232C60F7F60016D02F /* BirthdayViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047E14222C60F7F60016D02F /* BirthdayViewModel.swift */; };
 		047E14252C6100810016D02F /* ShoppingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047E14242C6100810016D02F /* ShoppingViewModel.swift */; };
 		047E14282C610ED00016D02F /* Shopping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047E14272C610ED00016D02F /* Shopping.swift */; };
-		047E142C2C6113160016D02F /* ShoppingTableViewCellViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047E142B2C6113160016D02F /* ShoppingTableViewCellViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -68,7 +67,6 @@
 		047E14222C60F7F60016D02F /* BirthdayViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BirthdayViewModel.swift; sourceTree = "<group>"; };
 		047E14242C6100810016D02F /* ShoppingViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingViewModel.swift; sourceTree = "<group>"; };
 		047E14272C610ED00016D02F /* Shopping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shopping.swift; sourceTree = "<group>"; };
-		047E142B2C6113160016D02F /* ShoppingTableViewCellViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingTableViewCellViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -177,7 +175,6 @@
 				047E140C2C5F3BD50016D02F /* ShoppingListViewController.swift */,
 				047E14242C6100810016D02F /* ShoppingViewModel.swift */,
 				047E140E2C5F3FE80016D02F /* ShoppingTableViewCell.swift */,
-				047E142B2C6113160016D02F /* ShoppingTableViewCellViewModel.swift */,
 				047E14162C5FB2170016D02F /* ShoppingDetailViewController.swift */,
 				047E14272C610ED00016D02F /* Shopping.swift */,
 			);
@@ -263,7 +260,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				047E142C2C6113160016D02F /* ShoppingTableViewCellViewModel.swift in Sources */,
 				047E13E82C5BA9A10016D02F /* PhoneViewController.swift in Sources */,
 				047E14282C610ED00016D02F /* Shopping.swift in Sources */,
 				047E13F82C5BAA090016D02F /* Resource.swift in Sources */,

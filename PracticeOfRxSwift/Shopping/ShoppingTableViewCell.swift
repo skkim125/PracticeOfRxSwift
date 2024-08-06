@@ -18,10 +18,6 @@ final class ShoppingTableViewCell: UITableViewCell {
     let shoppingTitleLabel = UILabel()
     let starButton = UIButton()
     
-    let viewModel = ShoppingTableViewCellViewModel()
-    lazy var input = ShoppingTableViewCellViewModel.Input(shopping: BehaviorRelay(value: Shopping(title: "", isCompleted: false, isStared: false)), completeButtonTap: completeButton.rx.tap, starButtonTap: starButton.rx.tap)
-    lazy var output = viewModel.transform(input: input)
-    
     var disposeBag = DisposeBag()
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

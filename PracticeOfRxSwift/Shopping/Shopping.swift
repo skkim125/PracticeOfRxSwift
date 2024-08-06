@@ -8,6 +8,7 @@
 import Foundation
 
 struct Shopping {
+    let id = UUID()
     let title: String
     var isCompleted: Bool
     var isStared: Bool

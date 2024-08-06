@@ -15,6 +15,7 @@ final class ShoppingViewModel {
     struct Input {
         let shoppingTitle: ControlProperty<String>
         let addButtonTap: ControlEvent<Void>
+        let cellTap: ControlEvent<IndexPath>
     }
     
     struct Output {
@@ -22,6 +23,7 @@ final class ShoppingViewModel {
         let list: BehaviorRelay<[Shopping]>
         let shoppingTitle: ControlProperty<String>
         let addButtonTap: ControlEvent<Void>
+        let cellTap: ControlEvent<IndexPath>
         
         mutating func shoppingisCompletedChange(_ index: Int) {
             shoppingList[index].isCompleted.toggle()
@@ -47,11 +49,11 @@ final class ShoppingViewModel {
     }
     
     func transform(input: Input) -> Output {
-        let shoppingList = shoppingList
         let list = BehaviorRelay(value: shoppingList)
         let shoppingTitle = input.shoppingTitle
         let addButtonTap = input.addButtonTap
+        let cellTap = input.cellTap
         
-        return Output(shoppingList: shoppingList, list: list, shoppingTitle: shoppingTitle, addButtonTap: addButtonTap)
+        return Output(shoppingList: ShoppingList.shared.shoppingList, list: list, shoppingTitle: shoppingTitle, addButtonTap: addButtonTap, cellTap: cellTap)
     }
 }
