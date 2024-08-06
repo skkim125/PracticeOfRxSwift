@@ -35,7 +35,7 @@ final class ShoppingDetailViewController: UIViewController {
     }()
     
     private let disposeBag = DisposeBag()
-    var shopping: Shopping?
+    let viewModel = ShoppingDetailViewModel()
     var moveData: ((Shopping) -> Void)?
     
     override func viewDidLoad() {
@@ -99,26 +99,33 @@ final class ShoppingDetailViewController: UIViewController {
     }
     
     func bind() {
-        completeButton.rx.tap
+        let input = ShoppingDetailViewModel.Input(completeButtonTap: completeButton.rx.tap, starButtonTap: starButton.rx.tap)
+        let output = viewModel.transform(input: input)
+        var shopping = viewModel.shopping
+        
+        output.completeButtonTap
             .bind(with: self) { owner, _ in
-                owner.shopping?.isCompleted.toggle()
-                guard let shopping = owner.shopping else { return }
+                shopping?.isCompleted.toggle()
+                guard let shopping = shopping else { return }
                 owner.configureView(shopping: shopping)
+                owner.viewModel.shopping = shopping
             }
             .disposed(by: disposeBag)
         
-        starButton.rx.tap
+        output.starButtonTap
             .bind(with: self) { owner, _ in
-                owner.shopping?.isStared.toggle()
-                guard let shopping = owner.shopping else { return }
+                shopping?.isStared.toggle()
+                guard let shopping = shopping else { return }
                 owner.configureView(shopping: shopping)
+                owner.viewModel.shopping = shopping
             }
             .disposed(by: disposeBag)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        guard let shopping = shopping else { return }
+        guard let shopping = viewModel.shopping else { return }
+        
         moveData?(shopping)
     }
 }

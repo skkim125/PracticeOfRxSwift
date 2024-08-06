@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		047569122C6249FA00FA1536 /* ShoppingDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047569112C6249FA00FA1536 /* ShoppingDetailViewModel.swift */; };
 		047E13C72C5BA8890016D02F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047E13C62C5BA8890016D02F /* AppDelegate.swift */; };
 		047E13C92C5BA8890016D02F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047E13C82C5BA8890016D02F /* SceneDelegate.swift */; };
 		047E13D02C5BA88A0016D02F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 047E13CF2C5BA88A0016D02F /* Assets.xcassets */; };
@@ -39,6 +40,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		047569112C6249FA00FA1536 /* ShoppingDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingDetailViewModel.swift; sourceTree = "<group>"; };
 		047E13C32C5BA8890016D02F /* PracticeOfRxSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PracticeOfRxSwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		047E13C62C5BA8890016D02F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		047E13C82C5BA8890016D02F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -83,6 +85,25 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		047569132C624A0D00FA1536 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+				047E14242C6100810016D02F /* ShoppingViewModel.swift */,
+				047569112C6249FA00FA1536 /* ShoppingDetailViewModel.swift */,
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
+		047569142C624A1400FA1536 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				047E140C2C5F3BD50016D02F /* ShoppingListViewController.swift */,
+				047E140E2C5F3FE80016D02F /* ShoppingTableViewCell.swift */,
+				047E14162C5FB2170016D02F /* ShoppingDetailViewController.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
 		047E13BA2C5BA8890016D02F = {
 			isa = PBXGroup;
 			children = (
@@ -172,10 +193,8 @@
 		047E14262C610E7D0016D02F /* Shopping */ = {
 			isa = PBXGroup;
 			children = (
-				047E140C2C5F3BD50016D02F /* ShoppingListViewController.swift */,
-				047E14242C6100810016D02F /* ShoppingViewModel.swift */,
-				047E140E2C5F3FE80016D02F /* ShoppingTableViewCell.swift */,
-				047E14162C5FB2170016D02F /* ShoppingDetailViewController.swift */,
+				047569142C624A1400FA1536 /* View */,
+				047569132C624A0D00FA1536 /* ViewModel */,
 				047E14272C610ED00016D02F /* Shopping.swift */,
 			);
 			path = Shopping;
@@ -267,6 +286,7 @@
 				047E13ED2C5BA9C10016D02F /* PointButton.swift in Sources */,
 				047E13EF2C5BA9CB0016D02F /* SignTextField.swift in Sources */,
 				047E141D2C60AE730016D02F /* SignUpViewModel.swift in Sources */,
+				047569122C6249FA00FA1536 /* ShoppingDetailViewModel.swift in Sources */,
 				047E13DE2C5BA9250016D02F /* PasswordViewController.swift in Sources */,
 				047E14252C6100810016D02F /* ShoppingViewModel.swift in Sources */,
 				047E13E12C5BA9550016D02F /* SignInViewController.swift in Sources */,

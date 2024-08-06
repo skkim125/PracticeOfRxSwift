@@ -131,10 +131,11 @@ final class ShoppingListViewController: UIViewController {
                 
                 let vc = ShoppingDetailViewController()
                 vc.configureView(shopping: data)
-                vc.shopping = data
+                vc.viewModel.shopping = data
                 
                 vc.moveData = { editShopping in
-                    output.editShopping(indexPath.row, editShopping: editShopping)
+                    output.shoppingList[indexPath.row] = editShopping
+                    output.list.accept(output.shoppingList)
                 }
                 
                 owner.navigationController?.pushViewController(vc, animated: true)

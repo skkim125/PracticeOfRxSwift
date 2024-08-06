@@ -54,6 +54,7 @@ final class ShoppingViewModel {
         let addButtonTap = input.addButtonTap
         let cellTap = input.cellTap
         
+        
         return Output(shoppingList: ShoppingList.shared.shoppingList, list: list, shoppingTitle: shoppingTitle, addButtonTap: addButtonTap, cellTap: cellTap)
     }
 }
