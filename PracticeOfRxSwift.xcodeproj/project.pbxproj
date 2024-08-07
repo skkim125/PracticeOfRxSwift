@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		047569122C6249FA00FA1536 /* ShoppingDetailViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047569112C6249FA00FA1536 /* ShoppingDetailViewModel.swift */; };
+		047569232C634A9100FA1536 /* ShoppingCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047569222C634A9100FA1536 /* ShoppingCollectionViewCell.swift */; };
 		047E13C72C5BA8890016D02F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047E13C62C5BA8890016D02F /* AppDelegate.swift */; };
 		047E13C92C5BA8890016D02F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 047E13C82C5BA8890016D02F /* SceneDelegate.swift */; };
 		047E13D02C5BA88A0016D02F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 047E13CF2C5BA88A0016D02F /* Assets.xcassets */; };
@@ -41,6 +42,7 @@
 
 /* Begin PBXFileReference section */
 		047569112C6249FA00FA1536 /* ShoppingDetailViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingDetailViewModel.swift; sourceTree = "<group>"; };
+		047569222C634A9100FA1536 /* ShoppingCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShoppingCollectionViewCell.swift; sourceTree = "<group>"; };
 		047E13C32C5BA8890016D02F /* PracticeOfRxSwift.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PracticeOfRxSwift.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		047E13C62C5BA8890016D02F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		047E13C82C5BA8890016D02F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -99,6 +101,7 @@
 			children = (
 				047E140C2C5F3BD50016D02F /* ShoppingListViewController.swift */,
 				047E140E2C5F3FE80016D02F /* ShoppingTableViewCell.swift */,
+				047569222C634A9100FA1536 /* ShoppingCollectionViewCell.swift */,
 				047E14162C5FB2170016D02F /* ShoppingDetailViewController.swift */,
 			);
 			path = View;
@@ -281,6 +284,7 @@
 			files = (
 				047E13E82C5BA9A10016D02F /* PhoneViewController.swift in Sources */,
 				047E14282C610ED00016D02F /* Shopping.swift in Sources */,
+				047569232C634A9100FA1536 /* ShoppingCollectionViewCell.swift in Sources */,
 				047E13F82C5BAA090016D02F /* Resource.swift in Sources */,
 				047E13E32C5BA9660016D02F /* SignInViewModel.swift in Sources */,
 				047E13ED2C5BA9C10016D02F /* PointButton.swift in Sources */,

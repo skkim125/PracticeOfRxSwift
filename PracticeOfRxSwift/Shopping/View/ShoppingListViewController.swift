@@ -39,6 +39,12 @@ final class ShoppingListViewController: UIViewController {
         
         return tv
     }()
+    private let collectionView = {
+        let cv = UICollectionView(frame: .zero, collectionViewLayout: collectionViewLayout())
+        cv.register(ShoppingCollectionViewCell.self, forCellWithReuseIdentifier: ShoppingCollectionViewCell.id)
+        
+        return cv
+    }()
     private let emptyLabel = UILabel()
     
     private let viewModel = ShoppingViewModel()
@@ -62,6 +68,7 @@ final class ShoppingListViewController: UIViewController {
         view.addSubview(shoppingTextField)
         view.addSubview(addButton)
         view.addSubview(tableView)
+        view.addSubview(collectionView)
     }
     func configureLayout() {
         shoppingTextField.snp.makeConstraints { make in
@@ -76,8 +83,14 @@ final class ShoppingListViewController: UIViewController {
             make.width.equalTo(50)
         }
         
+        collectionView.snp.makeConstraints { make in
+            make.top.equalTo(shoppingTextField.snp.bottom).offset(5)
+            make.height.equalTo(50)
+            make.horizontalEdges.equalToSuperview()
+        }
+        
         tableView.snp.makeConstraints { make in
-            make.top.equalTo(shoppingTextField.snp.bottom).offset(20)
+            make.top.equalTo(collectionView.snp.bottom).offset(5)
             make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(20)
             make.bottom.equalTo(view.safeAreaLayoutGuide)
         }
@@ -85,61 +98,62 @@ final class ShoppingListViewController: UIViewController {
     func configureView() {
         view.backgroundColor = .white
         
-        shoppingTextField.backgroundColor = .lightGray.withAlphaComponent(0.3)
-        addButton.backgroundColor = .lightGray
+        shoppingTextField.backgroundColor = .systemGray6
+        addButton.backgroundColor = .systemGray4
+    }
+    
+    static func collectionViewLayout() -> UICollectionViewFlowLayout {
+        let layout = UICollectionViewFlowLayout()
+        layout.itemSize = CGSize(width: 80, height: 40)
+        layout.scrollDirection = .horizontal
+        
+        return layout
     }
     
     func bind() {
-        let input = ShoppingViewModel.Input(shoppingTitle: shoppingTextField.rx.text.orEmpty, addButtonTap: addButton.rx.tap, cellTap: tableView.rx.itemSelected)
-        var output = viewModel.transform(input: input)
+        let completeCellIndex = PublishRelay<Int>()
+        let starButtonCellIndex = PublishRelay<Int>()
+        let input = ShoppingViewModel.Input(shoppingTitle: shoppingTextField.rx.text.orEmpty, completeButtonCellIndex: completeCellIndex, starButtonCellIndex: starButtonCellIndex, addButtonTap: addButton.rx.tap, cellTapIndex: tableView.rx.itemSelected, cellTapModel: tableView.rx.modelSelected(Shopping.self))
+
+        let output = viewModel.transform(input: input)
+        
+        output.recentSearchList
+            .bind(to: collectionView.rx.items(cellIdentifier: ShoppingCollectionViewCell.id, cellType: ShoppingCollectionViewCell.self)) { (row, element, cell) in
+                cell.layer.cornerRadius = 8
+                cell.clipsToBounds = true
+                cell.backgroundColor = .systemGray6
+                cell.layer.borderWidth = 1
+                cell.layer.borderColor = UIColor.black.cgColor
+                
+                cell.label.text = element
+            }
+            .disposed(by: disposeBag)
         
         output.list
             .bind(to: tableView.rx.items(cellIdentifier: ShoppingTableViewCell.id, cellType: ShoppingTableViewCell.self)) { (row, element, cell) in
                 
+                cell.selectionStyle = .none
                 cell.configureCell(shopping: element)
                 
                 cell.completeButton.rx.tap
-                    .bind(with: self) { _, _ in
-                        output.shoppingisCompletedChange(row)
+                    .map({ row })
+                    .bind(with: self) { owner, index in
+                        completeCellIndex.accept(index)
                     }
                     .disposed(by: cell.disposeBag)
                 
                 cell.starButton.rx.tap
-                    .bind(with: self) { _, _ in 
-                        output.shoppingisStaredChange(row)
+                    .map({ row })
+                    .bind(with: self) { owner, index in
+                        starButtonCellIndex.accept(index)
                     }
                     .disposed(by: cell.disposeBag)
             }
             .disposed(by: disposeBag)
         
-        output.addButtonTap
-            .withLatestFrom(output.shoppingTitle) { _, title in
-                return title
-            }
-            .bind(with: self) { owner, title in
-                if !title.isEmpty {
-                    output.addNewShopping(title: title)
-                } else {
-                    owner.showAlert()
-                }
-            }
-            .disposed(by: disposeBag)
-        
-        output.cellTap
-            .bind(with: self) { owner, indexPath in
-                let data = output.shoppingList[indexPath.row]
-                
-                let vc = ShoppingDetailViewController()
-                vc.configureView(shopping: data)
-                vc.viewModel.shopping = data
-                
-                vc.moveData = { editShopping in
-                    output.shoppingList[indexPath.row] = editShopping
-                    output.list.accept(output.shoppingList)
-                }
-                
-                owner.navigationController?.pushViewController(vc, animated: true)
-                owner.tableView.reloadRows(at: [indexPath], with: .automatic)
+        output.showAlert
+            .bind(with: self) { owner, _ in
+                owner.showAlert()
             }
             .disposed(by: disposeBag)
     }
@@ -151,10 +165,5 @@ final class ShoppingListViewController: UIViewController {
         alert.addAction(ok)
         
         present(alert, animated: true)
-    }
-    
-    private func shoppingStatusChange(output: inout ShoppingViewModel.Output, _ index: Int) {
-        output.shoppingList[index].isCompleted.toggle()
-        output.list.accept(output.shoppingList)
     }
 }
