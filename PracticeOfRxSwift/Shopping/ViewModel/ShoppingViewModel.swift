@@ -11,7 +11,7 @@ import RxCocoa
 
 final class ShoppingViewModel {
     private var shoppingList = ShoppingList.shared.shoppingList
-    private var recentSearchList: [String] = []
+    private var recentList: [String] = ["비상금 챙기기", "오레오 사기"]
     
     let disposeBag = DisposeBag()
     
@@ -20,8 +20,9 @@ final class ShoppingViewModel {
         let completeButtonCellIndex: PublishRelay<Int>
         let starButtonCellIndex: PublishRelay<Int>
         let addButtonTap: ControlEvent<Void>
-        let cellTapIndex: ControlEvent<IndexPath>
-        let cellTapModel: ControlEvent<Shopping>
+        let tableViewCellTapIndex: ControlEvent<IndexPath>
+        let tableViewCellTapModel: ControlEvent<Shopping>
+        let searchButtonClicked: ControlEvent<Void>
     }
     
     struct Output {
@@ -30,16 +31,18 @@ final class ShoppingViewModel {
         let addButtonTap: ControlEvent<Void>
         let showAlert: PublishRelay<Void>
         let recentSearchList: BehaviorRelay<[String]>
+        let searchButtonClicked: ControlEvent<Void>
     }
     
     func transform(input: Input) -> Output {
         let result = BehaviorRelay(value: shoppingList)
         let shoppingTitle = input.shoppingTitle
         let addButtonTap = input.addButtonTap
-        let cellTapModel = input.cellTapModel
-        let cellTapIndex = input.cellTapIndex
+        let cellTapModel = input.tableViewCellTapModel
+        let cellTapIndex = input.tableViewCellTapIndex
         let showAlert = PublishRelay<Void>()
-        let recentSearchList: BehaviorRelay<[String]> = BehaviorRelay(value: [])
+        let recentSearchList = BehaviorRelay(value: recentList)
+        let searchButtonClicked = input.searchButtonClicked
         
         input.completeButtonCellIndex
             .bind(with: self) { owner, index in
@@ -72,34 +75,33 @@ final class ShoppingViewModel {
         
         Observable.zip(cellTapIndex, cellTapModel)
             .bind(with: self) { owner, data in
-                owner.recentSearchList.append(data.1.title)
-                recentSearchList.accept(owner.recentSearchList)
+                owner.recentList.append(data.1.title)
+                recentSearchList.accept(owner.recentList)
             }
             .disposed(by: disposeBag)
         
+        input.searchButtonClicked
+            .withLatestFrom(shoppingTitle)
+            .debounce(.seconds(1), scheduler: MainScheduler.instance)
+            .distinctUntilChanged()
+            .map({ (!$0.isEmpty, $0) })
+            .bind(with: self) { owner, value in
+                if value.0 {
+                    let filter = owner.shoppingList.filter({ $0.title.lowercased().contains(value.1) })
+                    result.accept(filter)
+                }
+            }
+            .disposed(by: disposeBag)
         
-        return Output(list: result, shoppingTitle: shoppingTitle, addButtonTap: addButtonTap, showAlert: showAlert, recentSearchList: recentSearchList)
+        input.shoppingTitle
+            .map({ (!$0.isEmpty) })
+            .bind(with: self) { owner, isNotEmpty in
+                if isNotEmpty {
+                    result.accept(owner.shoppingList)
+                }
+            }
+            .disposed(by: disposeBag)
+
+        return Output(list: result, shoppingTitle: shoppingTitle, addButtonTap: addButtonTap, showAlert: showAlert, recentSearchList: recentSearchList, searchButtonClicked: searchButtonClicked)
     }
-    
-//    private func shoppingisCompletedChange(_ index: Int) {
-//        shoppingList[index].isCompleted.toggle()
-//        list.accept(shoppingList)
-//    }
-//    
-//    private func shoppingisStaredChange(_ index: Int) {
-//        shoppingList[index].isStared.toggle()
-//        list.accept(shoppingList)
-//    }
-    
-//    func addNewShopping(title: String) {
-//        let newShopping = Shopping(title: title, isCompleted: false, isStared: false)
-//        
-//        shoppingList.append(newShopping)
-//        list.accept(shoppingList)
-//    }
-//    
-//    func editShopping(_ index: Int, editShopping: Shopping) {
-//        shoppingList[index] = editShopping
-//        list.accept(shoppingList)
-//    }
 }

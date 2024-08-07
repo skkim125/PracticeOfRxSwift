@@ -32,6 +32,7 @@ final class ShoppingCollectionViewCell: UICollectionViewCell {
     }
     
     func configureView() {
+        label.font = .systemFont(ofSize: 14)
         label.textAlignment = .center
     }
     

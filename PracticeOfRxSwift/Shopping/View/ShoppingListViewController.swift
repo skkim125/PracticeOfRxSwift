@@ -12,22 +12,21 @@ import SnapKit
 
 final class ShoppingListViewController: UIViewController {
     
-    private let shoppingTextField = {
-        let tf = UITextField()
-        tf.placeholder = "무엇을 구매하실건가요?"
-        tf.borderStyle = .roundedRect
-        tf.rightView = UIView(frame: CGRect(x: 0, y: 0, width: 60, height: 0 ))
-        tf.rightViewMode = .always
+    private let searchBar = {
+        let searchBar = UISearchBar()
+        searchBar.placeholder = "쇼핑할 것을 추가 혹은 검색해보세요!"
+        searchBar.searchBarStyle = .minimal
         
-        return tf
+        return searchBar
     }()
     private let addButton = {
         let button = UIButton()
         button.setTitle("추가", for: .normal)
-        button.setTitleColor(.black, for: .normal)
+        button.setTitleColor(.white, for: .normal)
         button.titleLabel?.font = .systemFont(ofSize: 15)
+        button.backgroundColor = .systemBlue
         button.clipsToBounds = true
-        button.layer.cornerRadius = 4
+        button.layer.cornerRadius = 8
         
         return button
     }()
@@ -53,7 +52,7 @@ final class ShoppingListViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        configureNavigationBaer()
+        configureNavigationBar()
         configureHierarchy()
         configureLayout()
         configureView()
@@ -61,30 +60,31 @@ final class ShoppingListViewController: UIViewController {
         bind()
     }
     
-    func configureNavigationBaer() {
+    func configureNavigationBar() {
         navigationItem.title = "쇼핑"
     }
     func configureHierarchy() {
-        view.addSubview(shoppingTextField)
+        view.addSubview(searchBar)
         view.addSubview(addButton)
         view.addSubview(tableView)
         view.addSubview(collectionView)
     }
     func configureLayout() {
-        shoppingTextField.snp.makeConstraints { make in
-            make.height.equalTo(55)
-            make.top.equalTo(view.safeAreaLayoutGuide).offset(5)
-            make.horizontalEdges.equalTo(view.safeAreaLayoutGuide).inset(20)
+        searchBar.snp.makeConstraints { make in
+            make.top.equalTo(view.safeAreaLayoutGuide)
+            make.leading.equalTo(view.safeAreaLayoutGuide).inset(15)
         }
         
         addButton.snp.makeConstraints { make in
-            make.verticalEdges.equalTo(shoppingTextField.snp.verticalEdges).inset(10)
-            make.trailing.equalTo(shoppingTextField.snp.trailing).inset(10)
+            make.centerY.equalTo(searchBar)
+            make.height.equalTo(35)
+            make.leading.equalTo(searchBar.snp.trailing).offset(5)
+            make.trailing.equalTo(view.safeAreaLayoutGuide).inset(20)
             make.width.equalTo(50)
         }
         
         collectionView.snp.makeConstraints { make in
-            make.top.equalTo(shoppingTextField.snp.bottom).offset(5)
+            make.top.equalTo(searchBar.snp.bottom).offset(5)
             make.height.equalTo(50)
             make.horizontalEdges.equalToSuperview()
         }
@@ -97,13 +97,12 @@ final class ShoppingListViewController: UIViewController {
     }
     func configureView() {
         view.backgroundColor = .white
-        
-        shoppingTextField.backgroundColor = .systemGray6
-        addButton.backgroundColor = .systemGray4
+        tableView.rowHeight = 60
     }
     
     static func collectionViewLayout() -> UICollectionViewFlowLayout {
         let layout = UICollectionViewFlowLayout()
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 5, bottom: 0, right: 5)
         layout.itemSize = CGSize(width: 80, height: 40)
         layout.scrollDirection = .horizontal
         
@@ -113,7 +112,7 @@ final class ShoppingListViewController: UIViewController {
     func bind() {
         let completeCellIndex = PublishRelay<Int>()
         let starButtonCellIndex = PublishRelay<Int>()
-        let input = ShoppingViewModel.Input(shoppingTitle: shoppingTextField.rx.text.orEmpty, completeButtonCellIndex: completeCellIndex, starButtonCellIndex: starButtonCellIndex, addButtonTap: addButton.rx.tap, cellTapIndex: tableView.rx.itemSelected, cellTapModel: tableView.rx.modelSelected(Shopping.self))
+        let input = ShoppingViewModel.Input(shoppingTitle: searchBar.rx.text.orEmpty, completeButtonCellIndex: completeCellIndex, starButtonCellIndex: starButtonCellIndex, addButtonTap: addButton.rx.tap, tableViewCellTapIndex: tableView.rx.itemSelected, tableViewCellTapModel: tableView.rx.modelSelected(Shopping.self), searchButtonClicked: searchBar.rx.searchButtonClicked)
 
         let output = viewModel.transform(input: input)
         
@@ -131,8 +130,8 @@ final class ShoppingListViewController: UIViewController {
         
         output.list
             .bind(to: tableView.rx.items(cellIdentifier: ShoppingTableViewCell.id, cellType: ShoppingTableViewCell.self)) { (row, element, cell) in
-                
                 cell.selectionStyle = .none
+                
                 cell.configureCell(shopping: element)
                 
                 cell.completeButton.rx.tap
